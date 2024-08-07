@@ -179,7 +179,7 @@ def main(data_path, seed):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Lottery Script')
+    parser = argparse.ArgumentParser(description='GasPump Trading Competition prize selection')
     parser.add_argument('--data', type=str, required=True, help='Path to the .csv file')
     parser.add_argument('--seed', type=int, required=True, help='Random seed')  # get from 5 dice rolls in @gaspump_tv on live stream
     args = parser.parse_args()
