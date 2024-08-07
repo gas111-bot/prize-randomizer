@@ -34,14 +34,10 @@ def _load_data(path):
     df = pd.read_csv(path)
 
     # get telegram_id to username mapping
-    telegram_id_to_username = {}
-    for _, row in df.iterrows():
-        telegram_id = row['telegram_id']
-        username = row['username']
-        if pd.isnull(username):
-            telegram_id_to_username[telegram_id] = None
-        else:
-            telegram_id_to_username[telegram_id] = username
+    telegram_id_to_username = {
+        row['telegram_id']: row['username'] if not pd.isnull(row['username']) else None
+        for _, row in df.iterrows()
+    }
 
     return df, telegram_id_to_username
 
@@ -54,10 +50,9 @@ def _select_winners(df, telegram_id_to_username, seed, save_path):
 
     # shuffle tickets (randomization goes here)
     np.random.seed(seed)
-
     np.random.shuffle(tickets)
 
-    # select winners winners
+    # select winners
     winners = []
     for prize, details in prize_pool.items():
         for _ in range(details['n_items']):
@@ -82,13 +77,14 @@ def _get_stats(df, telegram_id_to_username):
     total_n_participants = df.shape[0]
 
     top_5_participants_df = df.nlargest(5, "tickets_count")
-    top_5_participants = []
-    for _, row in top_5_participants_df.iterrows():
-        top_5_participants.append({
+    top_5_participants = [
+        {
             "telegram_id": row["telegram_id"],
             "username": telegram_id_to_username.get(row["telegram_id"], None),
             "tickets_count": row["tickets_count"],
-        })
+        }
+        for _, row in top_5_participants_df.iterrows()
+    ]
 
     return top_5_participants, total_n_participants
 
